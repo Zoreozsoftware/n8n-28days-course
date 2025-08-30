@@ -1,0 +1,85 @@
+{
+  "name": "n8n-day01",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        16
+      ],
+      "id": "9c04397b-6bee-4622-894d-b4dbbab6ee19",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a7dbe286-300f-4feb-91df-7a31d9b9766c",
+              "name": "Muhammad Daniyal",
+              "value": "raodani0111@gmail.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        32
+      ],
+      "id": "cdcdaee1-aa54-40da-9400-d660c955c832",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        304,
+        16
+      ],
+      "id": "84307ffd-62a7-4337-a5e0-bc1c2ea169dd",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3b3a3664-7112-487b-9dbf-9f9a2df1c83e",
+  "meta": {
+    "instanceId": "31f4e9740f6d7a9b60d556ca93a3eda937cdb842d69d0b0fdaec766f52c4b03d"
+  },
+  "id": "BPVs5HAvG6H7txkv",
+  "tags": []
+}
