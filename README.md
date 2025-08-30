@@ -36,3 +36,5 @@ By the end of Day 1:
 ---
 
 📌 Next: Day 2 — Connect Google Sheets & Notion 🚀
+<img width="1274" height="693" alt="image" src="https://github.com/user-attachments/assets/e9eb5b51-4d34-4702-a6da-628109a4b2e8" />
+
