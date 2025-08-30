@@ -1,0 +1,177 @@
+{
+  "name": "n8n-day02",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        -16
+      ],
+      "id": "d9874352-49e1-4999-93d2-bd1ca40b392f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"Name\": \"Shahood\",\n  \"Email\": \"shahood@example.com\",\n  \"Lead Source\": \"Website\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        -112
+      ],
+      "id": "5a4e11e1-222c-4711-b166-5149dce6ae22",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "pageId": {
+          "__rl": true,
+          "value": "https://www.notion.so/22db501b0b2f80f8b8a1d7a4849b783e?source=copy_link",
+          "mode": "url"
+        },
+        "title": "New Page",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        32
+      ],
+      "id": "94bc3999-8879-4c08-b992-a9c4c20d8fcf",
+      "name": "Create a page",
+      "credentials": {
+        "notionApi": {
+          "id": "jTwDuHEl120vxkcg",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1dMelMIjstKZ2a71ItDi6JYk3lR-cCeGBkYAKm0xvgEQ/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{$json[\"Email\"]}}\n",
+            "name": "={{$json[\"Name\"]}}\n",
+            "lead source": "={{$json[\"Lead Source\"]}}\n\n"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "lead source",
+              "displayName": "lead source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        16
+      ],
+      "id": "262bfbeb-4433-4259-9128-07389cbae360",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NkbXoVkQMMSUiwUz",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Create a page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a page": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ea428a4b-070e-4509-b193-c8500af241c4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "31f4e9740f6d7a9b60d556ca93a3eda937cdb842d69d0b0fdaec766f52c4b03d"
+  },
+  "id": "9o5qePFpgrclC0Ng",
+  "tags": []
+}
