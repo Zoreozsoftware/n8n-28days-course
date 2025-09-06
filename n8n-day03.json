@@ -1,0 +1,203 @@
+{
+  "name": "n8n-day03",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -64
+      ],
+      "id": "68af63f7-462a-4f88-af2b-fb2a642ffda3",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b59c1e0c-c77a-4677-8b81-3a943b0c54c5",
+              "name": "NAME",
+              "value": "SHAHOOD",
+              "type": "string"
+            },
+            {
+              "id": "85bf56ca-ace4-4b93-b086-c49a122949e9",
+              "name": "EMAIL",
+              "value": "SHAHOOD@GMAIL.COM",
+              "type": "string"
+            },
+            {
+              "id": "ca5577f7-ffb1-45ed-8508-b00a9b0ff065",
+              "name": "LEAD SOURCE ",
+              "value": "WEBSITE",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -304,
+        -64
+      ],
+      "id": "a318e231-33dd-44bc-bfb3-636fc9ba985b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "33247a81-4815-464b-b1a6-30c344281e2d",
+              "leftValue": "={{JSON[\"Lead Source\"]}}\n",
+              "rightValue": "WEBSITE",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -96,
+        -64
+      ],
+      "id": "3f072fa4-5e5a-460d-bd2c-12ef0dd6f8cd",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01a04ea1-2dd9-46dd-9deb-5e8bc3e0d71b",
+              "name": "Message",
+              "value": "=Welcome, Website lead → {{JSON[\"Name\"]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        -112
+      ],
+      "id": "6733e4f2-d14b-4eaa-8833-d3d83e3bc7d8",
+      "name": "WEBSITE PATH"
+    },
+    {
+      "parameters": {
+        "sendTo": "raodani0111@gmail.com",
+        "subject": "=Welcome Website Lead – {{$json[\"Name\"]}}",
+        "emailType": "text",
+        "message": "=Hi {{$json[\"Name\"]}},  Thanks for reaching out from our website. We’ll be in touch soon.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        128,
+        80
+      ],
+      "id": "06ee451c-15f6-4de3-9e94-250d79c2efcd",
+      "name": "Send a message",
+      "webhookId": "8f8bd9bd-c2b5-42a3-9683-ac62174d2bb0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9WiGY8zvAoekuUse",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "WEBSITE PATH": [
+      {
+        "json": {
+          "Name": "Shahood",
+          "Email": "shahood@example.com",
+          "LeadSource": "Facebook"
+        }
+      },
+      {
+        "json": {
+          "Name": "Dani",
+          "Email": "dani@example.com",
+          "LeadSource": "Instagram"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "WEBSITE PATH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8e5f147e-1cfd-4285-9f4e-67b6e5976ffa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "31f4e9740f6d7a9b60d556ca93a3eda937cdb842d69d0b0fdaec766f52c4b03d"
+  },
+  "id": "ouHWY7XBVjZAJMSy",
+  "tags": []
+}
