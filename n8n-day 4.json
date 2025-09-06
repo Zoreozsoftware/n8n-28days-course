@@ -1,0 +1,119 @@
+{
+  "name": "n8n-day 4",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        -80
+      ],
+      "id": "79776d50-0ca5-4f64-b3b2-ce93439d961b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { Name: \"Shahood\", Email: \"shahood@example.com\", LeadSource: \"Website\" },\n  { Name: \"Dani\", Email: \"dani@example.com\", LeadSource: \"Instagram\" },\n  { Name: \"Rao\", Email: \"rao@example.com\", LeadSource: \"Website\" },\n  { Name: \"Yasar\", Email: \"yasar@example.com\", LeadSource: \"Facebook\" },\n  { Name: \"Ali\", Email: \"ali@example.com\", LeadSource: \"Website\" },\n  { Name: \"Bilal\", Email: \"bilal@example.com\", LeadSource: \"Website\" },\n  { Name: \"Omar\", Email: \"omar@example.com\", LeadSource: \"Twitter\" },\n  { Name: \"Hamza\", Email: \"hamza@example.com\", LeadSource: \"Instagram\" },\n  { Name: \"Asad\", Email: \"asad@example.com\", LeadSource: \"Website\" },\n  { Name: \"Usman\", Email: \"usman@example.com\", LeadSource: \"Facebook\" }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        -80
+      ],
+      "id": "fc970283-3ad2-498c-bb5d-1a0b331f919b",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "batchSize": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        -80
+      ],
+      "id": "28a0366b-040a-4358-b201-c0c3bf0db2ad",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -176
+      ],
+      "id": "5d78cda8-0ee6-422e-97e9-dee41418dcf5",
+      "name": "WORKFLOW FINISHED"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        48,
+        16
+      ],
+      "id": "42ea30c0-aefb-469a-8338-50871eb9260a",
+      "name": "3 items passing at once"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "WORKFLOW FINISHED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "3 items passing at once",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "58846165-578a-4d23-932b-aafeb465fca6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "31f4e9740f6d7a9b60d556ca93a3eda937cdb842d69d0b0fdaec766f52c4b03d"
+  },
+  "id": "CYKrOiocd9AwMBfY",
+  "tags": []
+}
