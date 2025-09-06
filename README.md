@@ -100,14 +100,72 @@ On **Day 2**, the focus was on integrating **Google Sheets** with n8n and learni
 - Realized the importance of **field mapping in n8n nodes** rather than putting expressions inside the sheet itself.
 - <img width="1166" height="718" alt="image" src="https://github.com/user-attachments/assets/89502389-b9fa-4b4c-867d-af2d5558cbef" />
 
+# 🚀 n8n Learning Journey - Day 3
+
+## 📌 Task Overview
+On **Day 3**, the focus was on learning **conditional branching** with the **IF node**.  
+We used mock lead data and routed workflow execution based on the lead’s source.
 
 ---
 
-## 🔜 Next (Day 3 Preview)
-- Explore **If / Switch Nodes**.  
-- Learn **branching workflows** for conditional logic.  
-- Work on handling **multiple inputs & data flow control**.  
+## ✅ Steps Completed
+
+1. **Created Mock Data**
+   - Used a **Set Node** to generate lead information:
+     ```json
+     {
+       "Name": "Shahood",
+       "Email": "shahood@example.com",
+       "LeadSource": "Facebook"
+     }
+     ```
+
+2. **Added IF Node**
+   - Condition: `LeadSource` equals `"Website"`.  
+   - If **True** → run the “Website path”.  
+   - If **False** → run the “Non-Website path”.
+
+3. **Configured Website Path (True branch)**
+   - For now, a simple **Set Node** to confirm workflow routing worked.  
+   - Message example: `Welcome Website lead – {{$json["Name"]}}`.
+
+4. **Configured Non-Website Path (False branch)**
+   - Added a **Slack Node** to send an alert when a lead comes from another source.  
+   - Slack message template:
+     ```
+     🚦 Non-Website Lead
+     Name: {{$json["Name"]}}
+     Email: {{$json["Email"]}}
+     Source: {{$json["LeadSource"]}}
+     ```
+
+5. **Tested Workflow**
+   - Case 1: `LeadSource = Website` → Website path executed.  
+   - Case 2: `LeadSource = Facebook` → Slack notification triggered.
 
 ---
+
+## 📖 Resources Used
+- [IF Node Docs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.if/)  
+- [Slack Node Docs](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.slack/)  
+
+---
+
+## 📝 Learnings
+- How to use **IF node** for conditional routing.  
+- How to pass mock data into workflows with a **Set Node**.  
+- How to trigger different outputs (Slack message vs Website path).
+- <img width="1347" height="620" alt="image" src="https://github.com/user-attachments/assets/c0bf3dbc-2ffb-44c4-ad3d-a25ed38487f2" />
+ 
+
+---
+
+## 🔜 Next (Day 4 Preview)
+- Explore **SplitInBatches node** to process multiple leads in smaller chunks.  
+- This will prepare us for handling bulk data safely (e.g., Google Sheets or API responses).  
+
+--
+
+
 
 
