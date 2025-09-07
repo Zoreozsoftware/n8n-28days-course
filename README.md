@@ -259,7 +259,53 @@ Learn how to use the **HTTP Request node** in n8n to send data to an external AP
 ## 📚 References  
 - n8n Docs: [HTTP Request Node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/)  
 - Test API: [JSONPlaceholder](https://jsonplaceholder.typicode.com/)  
+# Day 6 – Data Transformation with Set & Function Nodes  
 
+## 🎯 Goal  
+Learn how to transform, enrich, and clean data inside n8n using the **Set node** (expressions) and the **Function node** (JavaScript). These nodes are essential when preparing data for APIs, databases, or dashboards.  
+
+---
+
+## 🛠 What We Did  
+
+### 1. `Mock Leads (Code)`  
+- Generated 10 sample leads with fields:  
+  - `Name`  
+  - `Email`  
+  - `LeadSource`  
+- Purpose: Provide test data for transformation practice.  
+
+---
+
+### 2. `Add Extra Fields (Set)`  
+- Added new fields using **expressions**:  
+  - `fullName` → `{{$json["Name"].toUpperCase()}}` (uppercase conversion)  
+  - `tag` → `Lead from {{$json["LeadSource"]}}` (adds lead source label)  
+- Purpose: Enrich raw data with calculated values.  
+
+---
+
+### 3. `Extract Domain & Verify (Function)`  
+- Applied custom JavaScript:  
+  ```javascript
+  return items.map(item => {
+    const email = item.json.Email || "";
+    let domain = null;
+    let verified = false;
+
+    if (email.includes("@")) {
+      domain = email.split('@')[1];
+      verified = domain === "example.com";
+    }
+
+    return {
+      json: {
+        ...item.json,
+        domain,
+        verified
+      }
+    };
+  });
 
 
 
