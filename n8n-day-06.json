@@ -1,0 +1,154 @@
+{
+  "name": "n8n-day-06",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { Name: \"Shahood\", Email: \"shahood@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Dani\", Email: \"dani@example.com\", LeadSource: \"Instagram\" }},\n  { json: { Name: \"Rao\", Email: \"rao@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Yasar\", Email: \"yasar@example.com\", LeadSource: \"Facebook\" }},\n  { json: { Name: \"Ali\", Email: \"ali@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Bilal\", Email: \"bilal@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Omar\", Email: \"omar@example.com\", LeadSource: \"Twitter\" }},\n  { json: { Name: \"Hamza\", Email: \"hamza@example.com\", LeadSource: \"Instagram\" }},\n  { json: { Name: \"Asad\", Email: \"asad@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Usman\", Email: \"usman@example.com\", LeadSource: \"Facebook\" }}\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        -16
+      ],
+      "id": "97afbf3e-e341-4d82-a7ee-91ed6bfe9762",
+      "name": "mockup leads"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -992,
+        -16
+      ],
+      "id": "95606a13-f6bb-4d32-a21e-50752ac7c465",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const email = item.json.Email || \"\"; // fallback if missing\n  let domain = null;\n  let verified = false;\n\n  if (email.includes(\"@\")) {\n    domain = email.split('@')[1];\n    verified = domain === \"example.com\";\n  }\n\n  return {\n    json: {\n      ...item.json,\n      domain,\n      verified\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        -16
+      ],
+      "id": "f89aa719-4af0-418c-8de2-862fcb9a1002",
+      "name": "Extract Domain & Verify (Function)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08e9fda3-be92-4e5b-aec0-77bb5af33ff3",
+              "name": "fullName",
+              "value": "={{JSON[\"Name\"].toUpperCase()}}",
+              "type": "string"
+            },
+            {
+              "id": "0476165a-2aa6-4c97-877e-befe2efc74cb",
+              "name": "tag",
+              "value": "=Lead from {{JSON[\"Lead Source\"]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -528,
+        -16
+      ],
+      "id": "5f001c3e-6dd9-4ddb-bc14-68277124936d",
+      "name": "Add Extra Fields (Set)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "df8a4761-53e1-45ce-8186-fa8f9c02048f",
+      "name": "Preview Final Data (NoOp)"
+    },
+    {
+      "parameters": {
+        "content": "\n👉 The workflow takes raw leads, enriches them with uppercase names and source tags, then applies custom JavaScript to extract email domains and verify specific leads. Finally, it outputs the transformed dataset for review.",
+        "height": 80,
+        "width": 784
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -816,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "dfb0205e-d4c0-4581-bdac-647b77cecf22",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "mockup leads": {
+      "main": [
+        [
+          {
+            "node": "Add Extra Fields (Set)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "mockup leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Extra Fields (Set)": {
+      "main": [
+        [
+          {
+            "node": "Extract Domain & Verify (Function)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Domain & Verify (Function)": {
+      "main": [
+        [
+          {
+            "node": "Preview Final Data (NoOp)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ff14064d-1d53-4f37-aceb-6756407d22f0",
+  "meta": {
+    "instanceId": "31f4e9740f6d7a9b60d556ca93a3eda937cdb842d69d0b0fdaec766f52c4b03d"
+  },
+  "id": "AvcQDJuh8XjHcujb",
+  "tags": []
+}
