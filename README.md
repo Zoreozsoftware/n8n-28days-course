@@ -156,15 +156,112 @@ We used mock lead data and routed workflow execution based on the lead’s sourc
 - How to pass mock data into workflows with a **Set Node**.  
 - How to trigger different outputs (Slack message vs Website path).
 - <img width="1347" height="620" alt="image" src="https://github.com/user-attachments/assets/c0bf3dbc-2ffb-44c4-ad3d-a25ed38487f2" />
- 
+
+ # Day 4 – Split Data into Batches  
+
+## 🎯 Goal  
+Understand how to use the **SplitInBatches node** in n8n to process data in smaller groups instead of all at once. This is essential when working with **large datasets** or **APIs that have rate limits**.  
 
 ---
 
-## 🔜 Next (Day 4 Preview)
-- Explore **SplitInBatches node** to process multiple leads in smaller chunks.  
-- This will prepare us for handling bulk data safely (e.g., Google Sheets or API responses).  
+## 🛠 What We Did  
+1. Created **10 mock leads** using a Code node with fields:  
+   - `Name`  
+   - `Email`  
+   - `LeadSource`  
 
---
+2. Added a **SplitInBatches node**:  
+   - Set **Batch Size** = `3`  
+   - Connected Code → SplitInBatches  
+
+3. Connected outputs:  
+   - **Loop output** → NoOp node (to preview batch items)  
+   - **Done output** → Finished node (to confirm workflow completion)  
+
+4. Ran the workflow:  
+   - First run showed **3 leads** in NoOp.  
+   - Clicked **Continue Workflow** to process next 3 leads.  
+   - Repeated until all 10 leads were processed.  
+   - Finally, the **Done output** triggered the Finished node.  
+
+---
+
+## ✅ Key Learnings  
+- **Loop output** runs once for every batch.  
+- **Done output** runs **only once** after the last batch is processed.  
+- This node is crucial for:  
+  - Handling **APIs with rate limits** (send requests gradually).  
+  - Breaking **large datasets** into smaller parts.  
+  - Running workflows more **efficiently**.  
+
+---
+
+## 📸 Deliverables  
+- Workflow file: `day04_split_batches.json`  
+- Screenshot showing:  
+  - Batch 1 (3 items)  
+  - Batch 2 (3 items)  
+  - Batch 3 (3 items)  
+  - Batch 4 (1 item)  
+  - Done output triggered  
+
+---
+
+## 📚 References  
+- n8n Docs: [SplitInBatches Node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.splitinbatches/)  
+- 28-Day Roadmap → Day 4 Task  
+
+---
+
+## 💡 Bonus  
+In future workflows, this setup can be extended by connecting each batch to an **API call (HTTP Request node)**, making it ideal for bulk data processing.  
+# Day 5 – API Requests with n8n  
+
+## 🎯 Goal  
+Learn how to use the **HTTP Request node** in n8n to send data to an external API and handle responses.  
+
+---
+
+## 🛠 What We Did  
+1. Started with **10 mock leads** using a Code node (Name, Email, LeadSource).  
+2. Added **SplitInBatches node** (batch size = 3) to process leads in groups.  
+3. Connected **Loop output → HTTP Request node**.  
+4. Configured HTTP Request:  
+   - **Method**: `POST`  
+   - **URL**: `https://jsonplaceholder.typicode.com/posts` (test API)  
+   - **Body Content Type**: `JSON`  
+   - **JSON Body**:  
+     ```json
+     {
+       "name": "{{$json['Name']}}",
+       "email": "{{$json['Email']}}",
+       "leadSource": "{{$json['LeadSource']}}"
+     }
+     ```  
+5. Connected HTTP Request → **NoOp node** to preview API responses.  
+
+---
+
+## ✅ Key Learnings  
+- The **HTTP Request node** is the gateway to any API.  
+- You can send dynamic data using **expressions** (`{{$json['FieldName']}}`).  
+- **SplitInBatches** helps prevent hitting API rate limits by sending data gradually.  
+- Fake APIs like [JSONPlaceholder](https://jsonplaceholder.typicode.com/) are perfect for testing.  
+
+---
+
+## 📸 Deliverables  
+- Workflow file: `day05_api_requests.json`  
+- Screenshot showing API responses with IDs.  
+
+---
+
+## 📚 References  
+- n8n Docs: [HTTP Request Node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/)  
+- Test API: [JSONPlaceholder](https://jsonplaceholder.typicode.com/)  
+
+
+
 
 
 
