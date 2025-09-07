@@ -1,0 +1,130 @@
+{
+  "name": "n8n-day-05",
+  "nodes": [
+    {
+      "parameters": {
+        "batchSize": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -480,
+        -112
+      ],
+      "id": "6c1fd23b-a9cd-4b86-afea-548e747d441e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://jsonplaceholder.typicode.com/posts",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{$json['Name']}}\",\n  \"email\": \"{{$json['Email']}}\",\n  \"leadSource\": \"{{$json['LeadSource']}}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -208,
+        -32
+      ],
+      "id": "977e2d4a-829e-45bc-89e5-0b0920e9429d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { Name: \"Shahood\", Email: \"shahood@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Dani\", Email: \"dani@example.com\", LeadSource: \"Instagram\" }},\n  { json: { Name: \"Rao\", Email: \"rao@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Yasar\", Email: \"yasar@example.com\", LeadSource: \"Facebook\" }},\n  { json: { Name: \"Ali\", Email: \"ali@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Bilal\", Email: \"bilal@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Omar\", Email: \"omar@example.com\", LeadSource: \"Twitter\" }},\n  { json: { Name: \"Hamza\", Email: \"hamza@example.com\", LeadSource: \"Instagram\" }},\n  { json: { Name: \"Asad\", Email: \"asad@example.com\", LeadSource: \"Website\" }},\n  { json: { Name: \"Usman\", Email: \"usman@example.com\", LeadSource: \"Facebook\" }}\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        -112
+      ],
+      "id": "0550ad2b-3448-491f-8257-097ac5ee83fb",
+      "name": "mockup leads"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        -112
+      ],
+      "id": "c642048a-015d-4026-960b-0a14b013f7ac",
+      "name": "start"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -32
+      ],
+      "id": "8cd8f780-8f05-4b7e-832a-bbb66e12d58d",
+      "name": "NoOps"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "NoOps",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mockup leads": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "start": {
+      "main": [
+        [
+          {
+            "node": "mockup leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e159d5dc-7e58-437e-a3a7-98dffdd906d7",
+  "meta": {
+    "instanceId": "31f4e9740f6d7a9b60d556ca93a3eda937cdb842d69d0b0fdaec766f52c4b03d"
+  },
+  "id": "lOxO9lW4TJfCWQMq",
+  "tags": []
+}
