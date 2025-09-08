@@ -1,0 +1,145 @@
+{
+  "name": "n8n-day-07",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -128
+      ],
+      "id": "432d8cfc-dab0-49b8-983b-e6f29f077bed",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "return Array.from({ length: 10 }, (_, i) => ({ json: { counter: i + 1 } }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        -128
+      ],
+      "id": "e8322321-c1e1-478c-980e-ff4a3deac7c6",
+      "name": "Generate Numbers (Code)"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -64,
+        -128
+      ],
+      "id": "2213d983-c089-47b0-b498-14d1504fd1d5",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  return {\n    json: {\n      original: item.json.counter,\n      squared: item.json.counter ** 2\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "e57ec1c3-d18a-47ea-86d7-c2f49898eb05",
+      "name": "Process Item (Function)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -224
+      ],
+      "id": "febffbd1-d30c-4d3e-87cd-35c597bd83c0",
+      "name": "NoOps"
+    },
+    {
+      "parameters": {
+        "content": "👉 This workflow shows how n8n can loop through leads one by one instead of bulk, making it ideal for daily routines like:\n\nProcessing paginated API data\n\nRunning daily sales/enrichment checks\n\nSending reminders/emails one at a time\n\nRunning retries until success",
+        "height": 208,
+        "width": 784
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        112
+      ],
+      "typeVersion": 1,
+      "id": "52b616ca-ff37-4cf2-985b-c46a6321d8cf",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Generate Numbers (Code)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Numbers (Code)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "NoOps",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process Item (Function)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Item (Function)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b3f62dbc-e175-459d-b098-59f9abf99938",
+  "meta": {
+    "instanceId": "31f4e9740f6d7a9b60d556ca93a3eda937cdb842d69d0b0fdaec766f52c4b03d"
+  },
+  "id": "PCfNzhDSBLfJSyPL",
+  "tags": []
+}
