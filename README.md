@@ -307,6 +307,38 @@ Learn how to transform, enrich, and clean data inside n8n using the **Set node**
     };
   });
 
+# Day 7 – Loops & Iterations in n8n  
+
+## 🎯 Goal  
+Learn how to loop through items one by one using the **SplitInBatches node** and process each item with custom logic. This is essential for handling paginated APIs, retries, and any workflow that requires step-by-step execution.  
+
+---
+
+## 🛠 What We Did  
+
+### 1. `Start Trigger (Manual)`  
+- Starts the workflow when clicking **Execute workflow**.  
+- Purpose: Test workflow manually before adding real triggers.  
+
+### 2. `Generate Numbers (Code)`  
+- Creates 10 mock items with a `counter` field (1 → 10).  
+- Purpose: Provide input data for looping practice.  
+
+### 3. `Loop Over Items (SplitInBatches)`  
+- Processes 1 item at a time (Batch Size = 1).  
+- Sends items forward until all are processed.  
+
+### 4. `Process Item (Function)`  
+- Custom logic applied to each item:  
+  ```javascript
+  return items.map(item => {
+    return {
+      json: {
+        original: item.json.counter,
+        squared: item.json.counter ** 2
+      }
+    };
+  });
 
 
 
