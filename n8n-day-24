@@ -1,0 +1,94 @@
+{
+  "name": "Notion to Instagram Scheduler with Error Alerts",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [{ "mode": "everyHour" }]
+        },
+        "documentId": { "__rl": true, "value": "YOUR_NOTION_DATABASE_ID", "mode": "id" },
+        "event": "pagedUpdatedInDatabase",
+        "filters": {
+          "conditions": [{ "property": "Status", "select": { "equals": "Ready to Post" } }]
+        }
+      },
+      "id": "notion-poll",
+      "name": "Notion: Watch Database",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            {
+              "id": "date-check",
+              "leftValue": "={{ $json.properties.ScheduledDate.date.start }}",
+              "operator": { "type": "dateTime", "operation": "beforeOrEquals" },
+              "rightValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "date-filter",
+      "name": "Filter: Is it time?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [620, 300]
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "instagramAccountId": "YOUR_INSTAGRAM_ID",
+        "caption": "={{ $json.properties.Caption.title[0].plain_text }}",
+        "mediaUrl": "={{ $json.properties.ImageURL.url }}"
+      },
+      "id": "ig-post",
+      "name": "Instagram: Post",
+      "type": "n8n-nodes-base.instagram",
+      "typeVersion": 1,
+      "position": [840, 300],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": { "__rl": true, "value": "={{ $node[\"Notion: Watch Database\"].json.id }}", "mode": "id" },
+        "propertiesUi": {
+          "propertyValues": [{ "property": "Status", "select": "Posted" }]
+        }
+      },
+      "id": "notion-final",
+      "name": "Notion: Mark Posted",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [1060, 200]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": { "id": "YOUR_SLACK_CHANNEL_ID" },
+        "text": "=❌ *Instagram Post Failed!*\n*Page:* {{ $node[\"Notion: Watch Database\"].json.url }}\n*Error:* {{ $node[\"Instagram: Post\"].json.error.message }}\n*Action:* Check your Image URL and Caption length.",
+        "otherOptions": { "includeLinkToWorkflow": true }
+      },
+      "id": "slack-error",
+      "name": "Slack: Alert Failure",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [1060, 400]
+    }
+  ],
+  "connections": {
+    "Notion: Watch Database": { "main": [[{ "node": "Filter: Is it time?", "type": "main", "index": 0 }]] },
+    "Filter: Is it time?": { "main": [[{ "node": "Instagram: Post", "type": "main", "index": 0 }]] },
+    "Instagram: Post": {
+      "main": [
+        [{ "node": "Notion: Mark Posted", "type": "main", "index": 0 }],
+        [{ "node": "Slack: Alert Failure", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}
