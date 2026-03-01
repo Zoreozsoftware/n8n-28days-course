@@ -1,0 +1,86 @@
+{
+  "name": "German Restaurant Lead Gen (No Website)",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [{ "hour": 9 }]
+        }
+      },
+      "id": "daily-cron",
+      "name": "Every Morning",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://places.googleapis.com/v1/places:searchText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Goog-Api-Key", "value": "YOUR_GOOGLE_API_KEY" },
+            { "name": "X-Goog-FieldMask", "value": "places.displayName,places.internationalPhoneNumber,places.websiteUri,places.rating,places.formattedAddress" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "textQuery", "value": "Restaurants in Berlin, Germany" }
+          ]
+        }
+      },
+      "id": "google-places",
+      "name": "Google Maps: Find German Restaurants",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "no-web-check",
+              "leftValue": "={{ $json.websiteUri }}",
+              "operator": { "type": "string", "operation": "isEmpty" }
+            }
+          ]
+        }
+      },
+      "id": "filter-no-website",
+      "name": "Filter: Only No Website",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "create",
+        "databaseId": { "__rl": true, "value": "YOUR_NOTION_DB_ID", "mode": "id" },
+        "propertiesUi": {
+          "propertyValues": [
+            { "property": "Restaurant Name", "title": "={{ $json.displayName.text }}" },
+            { "property": "Phone", "richText": "={{ $json.internationalPhoneNumber }}" },
+            { "property": "Rating", "number": "={{ $json.rating }}" },
+            { "property": "Location", "richText": "={{ $json.formattedAddress }}" },
+            { "property": "Status", "select": "Needs Website" }
+          ]
+        }
+      },
+      "id": "notion-add",
+      "name": "Notion: Add Restaurant Lead",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [860, 300]
+    }
+  ],
+  "connections": {
+    "Every Morning": { "main": [[{ "node": "Google Maps: Find German Restaurants", "type": "main", "index": 0 }]] },
+    "Google Maps: Find German Restaurants": { "main": [[{ "node": "Filter: Only No Website", "type": "main", "index": 0 }]] },
+    "Filter: Only No Website": { "main": [[{ "node": "Notion: Add Restaurant Lead", "type": "main", "index": 0 }]] }
+  }
+}
