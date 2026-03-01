@@ -1,0 +1,93 @@
+{
+  "name": "Omni-Channel Social Media AI Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "cronExpression", "expression": "0 9 * * *" }]
+        }
+      },
+      "id": "trigger",
+      "name": "Daily 9AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [100, 240]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "fb", "name": "FB_Page_Id", "type": "string", "value": "INSERT_FB_PAGE_ID" },
+            { "id": "ig", "name": "IG_Business_Id", "type": "string", "value": "INSERT_IG_ID" },
+            { "id": "li", "name": "LI_Org_Id", "type": "string", "value": "urn:li:organization:INSERT_ID" },
+            { "id": "limit", "name": "Fetch_Limit", "type": "number", "value": 10 }
+          ]
+        }
+      },
+      "id": "config",
+      "name": "Global Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [320, 240]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "messageValues": [
+            {
+              "role": "system",
+              "content": "Analyze the social media comment. Return JSON: { \"sentiment\": \"Positive/Negative/Neutral/Question\", \"priority\": 1-5, \"summary\": \"string\" }"
+            },
+            { "role": "user", "content": "={{ $json.Comment_message }}" }
+          ]
+        },
+        "jsonOutput": true
+      },
+      "id": "ai-node",
+      "name": "AI Sentiment Analysis",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [1200, 240]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": { "id": "C0123456789", "name": "social-alerts" },
+        "text": "=🚨 *High Priority Social Comment Detected!*\n*Platform:* {{ $json.Platform }}\n*Sentiment:* {{ $json.sentiment }}\n*Comment:* {{ $node[\"Select Result Field\"].json.Comment_message }}\n*Action:* Please review immediately.",
+        "otherOptions": { "includeLinkToWorkflow": true }
+      },
+      "id": "slack-node",
+      "name": "Slack: Alert Team",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [1600, 400],
+      "executeCondition": "={{ $json.priority >= 4 }}"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "YOUR_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "Sheet1", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": [
+            { "column": "Date", "value": "={{ $node[\"Select Result Field\"].json.Comment_created_time }}" },
+            { "column": "Comment", "value": "={{ $node[\"Select Result Field\"].json.Comment_message }}" },
+            { "column": "Sentiment", "value": "={{ $json.sentiment }}" },
+            { "column": "Priority", "value": "={{ $json.priority }}" }
+          ]
+        }
+      },
+      "id": "sheet-node",
+      "name": "Google Sheets: Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1600, 200]
+    }
+  ],
+  "connections": {
+    "Daily 9AM Trigger": { "main": [[{ "node": "Global Config", "type": "main", "index": 0 }]] },
+    "AI Sentiment Analysis": { "main": [[{ "node": "Google Sheets: Log", "type": "main", "index": 0 }, { "node": "Slack: Alert Team", "type": "main", "index": 0 }]] }
+  }
+}
