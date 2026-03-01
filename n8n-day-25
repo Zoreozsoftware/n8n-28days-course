@@ -1,0 +1,78 @@
+{
+  "name": "WhatsApp Manager to Notion To-Do",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-webhook",
+        "options": {}
+      },
+      "id": "wa-trigger",
+      "name": "WhatsApp Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "messageValues": [
+            {
+              "role": "system",
+              "content": "Extract task info from the WhatsApp message. Today is {{ $now }}. Return JSON: { \"employee\": \"string\", \"task\": \"string\", \"due_date\": \"ISO_DATE\" }"
+            },
+            {
+              "role": "user",
+              "content": "={{ $json.body.entry[0].changes[0].value.messages[0].text.body }}"
+            }
+          ]
+        },
+        "jsonOutput": true
+      },
+      "id": "ai-parser",
+      "name": "AI: Extract Task Details",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "create",
+        "databaseId": { "__rl": true, "value": "YOUR_NOTION_DB_ID", "mode": "id" },
+        "propertiesUi": {
+          "propertyValues": [
+            { "property": "Task Name", "title": "={{ $json.task }}" },
+            { "property": "Assigned To", "richText": "={{ $json.employee }}" },
+            { "property": "Due Date", "date": "={{ $json.due_date }}" },
+            { "property": "Status", "select": "To Do" }
+          ]
+        }
+      },
+      "id": "notion-add",
+      "name": "Notion: Create Task",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "phoneNumberId": "YOUR_WA_PHONE_ID",
+        "recipientPhoneNumber": "={{ $node[\"WhatsApp Webhook\"].json.body.entry[0].changes[0].value.messages[0].from }}",
+        "text": "=✅ Task Assigned!\n👤 *Employee:* {{ $node[\"AI: Extract Task Details\"].json.employee }}\n📝 *Task:* {{ $node[\"AI: Extract Task Details\"].json.task }}\n📅 *Due:* {{ $node[\"AI: Extract Task Details\"].json.due_date }}"
+      },
+      "id": "wa-reply",
+      "name": "WhatsApp: Confirm to Manager",
+      "type": "n8n-nodes-base.whatsappBusiness",
+      "typeVersion": 1,
+      "position": [950, 300]
+    }
+  ],
+  "connections": {
+    "WhatsApp Webhook": { "main": [[{ "node": "AI: Extract Task Details", "type": "main", "index": 0 }]] },
+    "AI: Extract Task Details": { "main": [[{ "node": "Notion: Create Task", "type": "main", "index": 0 }]] },
+    "Notion: Create Task": { "main": [[{ "node": "WhatsApp: Confirm to Manager", "type": "main", "index": 0 }]] }
+  }
+}
